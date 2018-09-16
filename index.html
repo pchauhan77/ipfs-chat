@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<h1> IPFS Chat </h1>
+<div id="status">Connecting...</div>
+<input id="message"/><button onclick="create()">Create</button>
+<div id="output">Output</div>
+<input id="hash"/><button onClick="fetchContent()">Fetch</button><br><br>
+<input type="file" id="myimage" />
+<button onclick="addimage()">Add Image</button>
+<script src = "https://cdn.jsdelivr.net/npm/ipfs@0.31.7/dist/index.js"></script>
+<script> 
+const node = new Ipfs({})
+node.on('ready', () => {
+console.log('ready');
+document.querySelector('#status').innerHTML='Ready'
+})
+function create() {
+    let value = document.querySelector('#message').value
+    node.files.add({
+        content: node.types.Buffer(value)
+
+    }, (err, res) => {
+        console.log({err,res})
+       document.querySelector("#output").innerHTML=res[0].hash
+    })
+}
+function fetchContent() {
+        let hash=document.querySelector("#hash").value
+        console.log('hash', hash)
+         
+    }
+    function addimage() {
+        let image=document.querySelector("#myimage").files[0]
+        const read = new FileReader();
+        read.onloadend=function() {
+            console.log(read.result)
+            node.files.add({
+                content: node.types.Buffer.from(read.result)
+            }, (err, res) => {
+               console.log(res[0].hash)
+            })
+        }
+       read.readAsArrayBuffer(image)
+
+    }
+
+
+</script>
+</html>
